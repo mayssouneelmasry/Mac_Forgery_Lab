@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MAC Forgery Lab</title>
+  <style>
+    body {
+      background-color: #000d1a;
+      color: #33ffcc;
+      font-family: "Courier New", Courier, monospace;
+      padding: 20px;
+    }
+    h1 {
+      color: #00ffff;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #99ffcc;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      background-color: #001f33;
+      color: #33ffcc;
+      border: 1px solid #33ffcc;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 15px;
+      background-color: #004466;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .output {
+      background-color: #001a26;
+      padding: 15px;
+      border: 1px dashed #33ffcc;
+      margin-top: 20px;
+    }
+    .mode-indicator {
+      text-align: center;
+      color: #66ffff;
+      margin-bottom: 20px;
+    }
+    .links {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .links a {
+      color: #00ccff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    pre {
+      background-color: #001f33;
+      color: #00ffcc;
+      padding: 10px;
+      border: 1px solid #00ffcc;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 MAC Forgery Simulator</h1>
+  <div class="mode-indicator">
+    Mode: <strong>{{ mode|capitalize }}</strong>
+    <div class="links">
+      <a href="/?mode=insecure">🔓 Simulate Attack</a> |
+      <a href="/?mode=secure">🛡️ Test HMAC Defense</a>
+    </div>
+  </div>
+
+  <form method="POST">
+    <label>Original Message:</label>
+    <input type="text" name="original" value="{{ result.original if result and result.step == 'generate_mac' else '' }}" required>
+
+    <label>Intercepted MAC (required for forging/verifying):</label>
+    <input type="text" name="mac" value="{{ result.mac if result and result.step == 'generate_mac' else '' }}">
+
+    <label>Data to Append (optional for generating MAC):</label>
+    <input type="text" name="append">
+
+    <button name="step" value="generate_mac">🔧 Generate MAC</button>
+    <button name="step" value="forge_mac">💀 Forge / Verify MAC</button>
+  </form>
+
+  {% if result %}
+    <div class="output">
+      {% if result.error %}
+        <strong>Error:</strong> {{ result.error }}
+      {% elif result.full_output %}
+        <pre>{{ result.full_output }}</pre>
+      {% endif %}
+    </div>
+  {% endif %}
+</body>
+</html>
